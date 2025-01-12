@@ -14,14 +14,10 @@ import cv2
 from sklearn.model_selection import train_test_split
 
 
-
-
-
 def get_file_list(folder_path):
     file_list = [file[:-4] for file in os.listdir(folder_path) if file.endswith(('.txt'))]
     file_list.sort()
     return file_list
-
 
 # def split_labeling_file(file_list):
 #     for file in file_list:
@@ -79,7 +75,6 @@ def split_labeling_file(file_list):
             box[2] = int((box[2] - box[4] / 2) * height)
             box[3] = int(box[3] * width)
             box[4] = int(box[4] * height)
-
             # print(box)
             roi = check_roi(width, height, box)
             if box[0] == 0:
@@ -87,7 +82,6 @@ def split_labeling_file(file_list):
             else:
                 motion_list.append(roi)
                 crop_image(img.copy(), roi)
-
 
         for person in person_list:
             for motion in motion_list:
@@ -101,7 +95,6 @@ def split_labeling_file(file_list):
 
         fr.close()
 
-
 def crop_image(img, roi):
     idx, x, y, w, h = roi
     cropped_image = img[y: y+h, x: x+w].copy()
@@ -114,7 +107,6 @@ def crop_image(img, roi):
         cv2.imwrite(crop_path, cropped_image)
     except:
         pass
-
 
 def get_iou(box1, box2):
     box1_area = (box1[3] + 1) * (box1[4] + 1)
@@ -133,7 +125,6 @@ def get_iou(box1, box2):
     iou = inter / (box1_area + box2_area - inter)
     return iou
 
-
 def check_roi(img_width, img_height, box):
     idx, x,y,w,h = box
     x = x if (x <= img_width - w) else (img_width - w)
@@ -142,7 +133,6 @@ def check_roi(img_width, img_height, box):
     y = int(y) if (y >= 0) else 0
     box = (idx, x, y, w, h)
     return box
-
 
 # train.txt 파일 생성
 def create_image_path(path):
@@ -173,43 +163,20 @@ def create_image_path(path):
             img_path = os.path.join(folder_path, file)
             f.write(img_path + '\n')
 
-
-            # for _ in range(num):
-            #     img_path = os.path.join(folder_path, random.choice(file_list))
-            #     f.write(img_path +'\n')
-
-            # for file in os.listdir(folder_path):
-            #     img_path = os.path.join(folder_path, file)
-            #     print(img_path)
-            #     f.write(img_path +'\n')
-
-
 if __name__== '__main__':
-    INPUT_PATH = '/home/fourind/darknet/anomaly/data/img'
+    INPUT_PATH = './img'
+    NORMAL_PATH = './normal/'
+    DIZZY_PATH = './dizzy/'
+    FALL_PATH = './fall/'
+    FIGHT_PATH = './fight/'
+    THREATEN_PATH = './threaten/'
+    ETC_PATH = './etc/'
 
-    NORMAL_PATH = '/home/fourind/darknet/anomaly/data/normal/'
-    DIZZY_PATH = '/home/fourind/darknet/anomaly/data/dizzy/'
-    FALL_PATH = '/home/fourind/darknet/anomaly/data/fall/'
-    FIGHT_PATH = '/home/fourind/darknet/anomaly/data/fight/'
-    THREATEN_PATH = '/home/fourind/darknet/anomaly/data/threaten/'
-    ETC_PATH = '/home/fourind/darknet/anomaly/data/etc/'
-
-    TRAIN_PATH = '/home/fourind/darknet/anomaly/data/'
+    TRAIN_PATH = './data/'
 
     classes = {0: 'normal', 1: 'dizzy', 2: 'fall', \
                3: 'fight', 4: 'threaten'}
     folder_by_class = [NORMAL_PATH, DIZZY_PATH, FALL_PATH, FIGHT_PATH, THREATEN_PATH]
     new_file_count = [0] * 5
-
-
-
-    # for folder_path in folder_by_class:
-    #     if not os.path.isdir(folder_path):
-    #         os.makedirs(folder_path)
-    #
-    #
-    # file_list = get_file_list(INPUT_PATH)  # bbox 데이터 파일 리스트
-    #
-    # split_labeling_file(file_list)
 
     create_image_path(TRAIN_PATH)
