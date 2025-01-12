@@ -21,7 +21,6 @@ from efficientnet_lite_pytorch import EfficientNet
 from efficientnet_lite2_pytorch_model import EfficientnetLite2ModelFile
 
 
-
 ## 데이터 로드
 def load_dataset():
     ## make dataset
@@ -64,7 +63,6 @@ def load_dataset():
     print('batch_size : %d, tvt : %d / %d / %d' % (batch_size, batch_num['train'], batch_num['valid'], batch_num['test']))
     return dataloaders
 
-
 def imshow(inp, title=None):
     inp = inp.numpy().transpose((1, 2, 0))
     mean = np.array([0.485, 0.456, 0.406])
@@ -75,7 +73,6 @@ def imshow(inp, title=None):
     if title is not None:
         plt.title(title)
     plt.pause(5)
-
 
 ## 데이터 체크
 def check_dataset():
@@ -94,9 +91,6 @@ def check_dataset():
     inputs, classes = next(iter(dataloaders['test']))
     out = torchvision.utils.make_grid(inputs[:num_show_img])
     imshow(out, title=[class_names[str(int(x))] for x in classes[:num_show_img]])
-
-
-
 
 ## 결과 그래프 출력
 def train_result_graph(best_idx, train_loss, train_acc, valid_loss, valid_acc):
@@ -120,7 +114,6 @@ def train_result_graph(best_idx, train_loss, train_acc, valid_loss, valid_acc):
 
     fig.tight_layout()
     plt.show()
-
 
 ## 학습
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
@@ -213,7 +206,6 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
     model.load_state_dict(best_model_wts)
     return model, best_idx, best_acc, train_loss, train_acc, valid_loss, valid_acc
 
-
 def test_model(weight, phase = 'test'):
     # phase = ' train', 'valid', 'test'
     model = EfficientNet.from_pretrained(model_name=model_name, weights_path=weight, num_classes=len(class_names))
@@ -241,38 +233,28 @@ def test_model(weight, phase = 'test'):
         print('test done : loss/acc : %.2f / %.1f' % (test_loss, test_acc * 100))
 
 
-
 if __name__=='__main__':
-    # class_names = {
-    #     "0": "normal",
-    #     "1": "fall",
-    # }
-
     class_names = {
         "0": "helmet",
         "1": "no helmet",
         "2": "negative"
     }
 
-
-    data_path = '/home/helena/hyewon/backup/dataset/0. helmet_final/train_0'
+    data_path = './train_0'
 
     # model save path
-    backup = '/home/helena/PycharmProjects/EfficientNet_classification/backup/helmet_final_4'
+    backup = './backup/helmet_final_4'
     if not os.path.isdir(backup):
         os.makedirs(backup)
 
     ## set
     model_name = 'efficientnet-lite2'
     weights_path = EfficientnetLite2ModelFile.get_model_file_path()
-    # weights_path = 'weight/efficientnet_lite3.pth'
     model = EfficientNet.from_pretrained(model_name, weights_path=weights_path, num_classes=len(class_names))
-    # model = EfficientNet.from_pretrained(model_name, num_classes=len(class_names))
-    # model.load_state_dict(torch.load(weights_path))
+
     batch_size = 32
     epochs = 100
     learning_rate = 0.001
-
 
     # Tensorboard 실시간 학습 보기
     # tensorboard --logdir=runs (해당 폴더위치에서 command)
@@ -316,10 +298,6 @@ if __name__=='__main__':
                                                                                           num_epochs=epochs,
                                                                                           )
     train_result_graph(best_idx, train_loss, train_acc, valid_loss, valid_acc)
-
-
-    # weight = './backup/helmet_binary_3/efficientnet-lite2_20_99.8.pt'
-    # test_model(weight, phase='test')
 
     writer_train.close()
     writer_valid.close()
